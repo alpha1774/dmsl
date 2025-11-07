@@ -1,0 +1,22 @@
+19) MongoDB – Employee DB & emp1 collection ops
+
+
+
+use Employee;
+db.createCollection("emp1");
+db.emp1.insertMany([
+ {eno:1,ename:"neha",address:"pune",sal:12000},
+ {eno:2,ename:"nayan",address:"mumbai",sal:8000},
+ {eno:3,ename:"ravi",address:"pune",sal:22000}
+]);
+db.emp1.find();
+db.emp1.find({sal:{$gt:5000}});
+db.emp1.find({sal:{$lt:15000}});
+db.emp1.find({sal:{$gt:10000,$lt:20000}});
+db.emp1.updateMany({},[{$set:{sal:{$round:[{$multiply:["$sal",1.10]},0]}}}]);
+db.emp1.deleteMany({sal:{$lt:5000}});
+db.emp1.renameCollection("employee1");
+db.employee1.find({ename:/^n/i});
+db.employee1.find().sort({ename:1});
+use Employee1; db.dropDatabase();
+use Employee; db.emp1.insertOne({eno:99}); db.emp1.drop();

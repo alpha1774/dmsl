@@ -1,0 +1,15 @@
+12) Teachers/Department/Students
+
+
+db.Teachers.insertMany([
+ {Tname:"A", dno:1, Experience:5, Salary:12000, Date_of_Joining:new Date("2020-06-01")},
+ {Tname:"B", dno:2, Experience:8, Salary:18000, Date_of_Joining:new Date("2019-01-10")}
+]);
+db.Department.insertMany([{Dno:1,Dname:"CS"},{Dno:2,Dname:"IT"}]);
+db.Students.insertMany([{Sname:"xyz",Roll_No:2,Class:"SE"},{Sname:"p",Roll_No:5,Class:"FE"}]);
+
+db.Teachers.find({dno:2, Salary:{$gte:10000}});
+db.Students.find({$or:[{Roll_No:2},{Sname:"xyz"}]});
+db.Students.updateOne({Roll_No:5},{$set:{Sname:"updated"}});
+db.Students.deleteMany({Class:"FE"});
+db.Students.createIndex({Sname:1});

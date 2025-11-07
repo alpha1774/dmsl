@@ -1,0 +1,13 @@
+13) Dept/teacher – aggregates + index
+
+
+use department;
+db.teacher.insertMany([
+ {name:"t1",department:"CS",experience:3,salary:15000},
+ {name:"t2",department:"CS",experience:5,salary:25000},
+ {name:"t3",department:"IT",experience:4,salary:20000}
+]);
+db.teacher.aggregate([{$group:{_id:"$department", avgSal:{$avg:"$salary"}}}]);
+db.teacher.aggregate([{$group:{_id:"$department", cnt:{$sum:1}}}]);
+db.teacher.aggregate([{$group:{_id:"$department", minSal:{$min:"$salary"}}}]);
+db.teacher.createIndex({department:1}); db.teacher.dropIndex({department:1});

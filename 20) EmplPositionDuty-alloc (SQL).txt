@@ -1,0 +1,15 @@
+20) Empl/Position/Duty-alloc (SQL)
+
+
+SELECT * FROM "Duty-alloc" WHERE e_no=123 AND shift=1 AND month='APR' AND year=2003;
+
+SELECT e.* FROM Empl e
+WHERE e.pay_rate >= (SELECT pay_rate FROM Empl WHERE e_name='Sachin');
+
+CREATE OR REPLACE VIEW Post_Salary_Stats AS
+SELECT p.post, MIN(e.pay_rate) min_pay, MAX(e.pay_rate) max_pay, AVG(e.pay_rate) avg_pay
+FROM Empl e JOIN Position p ON p.post=e.post GROUP BY p.post;
+
+SELECT shift, COUNT(DISTINCT e_no) emp_count
+FROM "Duty-alloc" WHERE LOWER(post)='manager'
+GROUP BY shift;

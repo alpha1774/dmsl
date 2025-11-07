@@ -1,0 +1,78 @@
+1) Traffic DB – Person/Car/Accident/Owns/Participated
+
+Steps (Oracle):
+
+Save as p1.sql.
+
+sqlplus ... @p1.sql
+
+Run checks at the bottom to show views and inserts worked.
+
+
+
+-- p1.sql
+-- Tables
+CREATE TABLE Person( driver_id NUMBER PRIMARY KEY, name VARCHAR2(50) NOT NULL, address VARCHAR2(80) );
+CREATE TABLE Car( license VARCHAR2(15) PRIMARY KEY, model VARCHAR2(30) NOT NULL, year NUMBER(4) );
+CREATE TABLE Accident( report_no NUMBER PRIMARY KEY, date_acc DATE NOT NULL, location VARCHAR2(60) );
+CREATE TABLE Owns( driver_id NUMBER REFERENCES Person(driver_id),
+                   license   VARCHAR2(15) REFERENCES Car(license),
+                   CONSTRAINT pk_owns PRIMARY KEY(driver_id, license) );
+CREATE TABLE Participated( driver_id NUMBER REFERENCES Person(driver_id),
+                           model VARCHAR2(30),
+                           report_no NUMBER REFERENCES Accident(report_no),
+                           damage_amount NUMBER(10,2),
+                           CONSTRAINT pk_part PRIMARY KEY(driver_id, report_no) );
+
+-- Sample data
+INSERT INTO Person VALUES(201,'Asha','Pune');
+INSERT INTO Person VALUES(202,'Rahul','Nashik');
+INSERT INTO Car VALUES('MH12AB1234','Swift',2020);
+INSERT INTO Car VALUES('MH12CD4321','City',2018);
+INSERT INTO Owns VALUES(201,'MH12AB1234');
+INSERT INTO Owns VALUES(202,'MH12CD4321');
+INSERT INTO Accident VALUES(6001, DATE '2025-01-15','Kothrud');
+INSERT INTO Participated VALUES(201,'Swift',6001,35000);
+
+-- Views / sequences / indexes / synonyms (as per sheet)
+CREATE OR REPLACE VIEW Driver_Car_View AS
+SELECT p.name, c.model FROM Person p JOIN Owns o ON o.driver_id=p.driver_id JOIN Car c ON c.license=o.license;
+SELECT * FROM Driver_Car_View;
+
+CREATE OR REPLACE VIEW Driver_Car_View AS
+SELECT p.name, c.model, c.year FROM Person p JOIN Owns o ON o.driver_id=p.driver_id JOIN Car c ON c.license=o.license;
+
+CREATE SEQUENCE seq_report_no START WITH 6001 INCREMENT BY 5;
+CREATE INDEX idx_car_model_year ON Car(model, year);
+
+CREATE OR REPLACE VIEW High_Damage_Drivers AS
+SELECT DISTINCT p.driver_id, p.name, pr.damage_amount
+FROM Person p JOIN Participated pr ON pr.driver_id=p.driver_id
+WHERE pr.damage_amount>20000;
+
+CREATE SEQUENCE seq_driver_id START WITH 203 INCREMENT BY 1;
+INSERT INTO Person(driver_id,name,address) VALUES (seq_driver_id.NEXTVAL,'Neha','Mumbai');
+
+CREATE INDEX idx_person_name ON Person(name);
+DROP INDEX idx_person_name;
+
+CREATE OR REPLACE VIEW Recent_Accidents AS
+SELECT * FROM Accident WHERE EXTRACT(YEAR FROM date_acc)=2025;
+DROP VIEW Recent_Accidents;
+
+CREATE SYNONYM acc_info FOR Accident;
+INSERT INTO acc_info(report_no,date_acc,location) VALUES (seq_report_no.NEXTVAL,SYSDATE,'Baner');
+
+CREATE UNIQUE INDEX uidx_car_license ON Car(license);
+
+CREATE OR REPLACE VIEW New_Car_Owners AS
+SELECT p.driver_id,p.name,c.model,c.year
+FROM Person p JOIN Owns o ON p.driver_id=o.driver_id JOIN Car c ON c.license=o.license
+WHERE c.year>2019;
+
+CREATE SEQUENCE seq_acc START WITH 7001 INCREMENT BY 1;
+INSERT INTO Accident(report_no,date_acc,location) VALUES (seq_acc.NEXTVAL, DATE '2025-02-10','Viman Nagar');
+
+CREATE SYNONYM owns_info FOR Owns;
+-- Run check:
+SELECT * FROM owns_info;

@@ -1,0 +1,9 @@
+16) MapReduce – salaries
+
+
+use employee;
+db.computer.insertMany([{ename:"a",Salary:10000},{ename:"b",Salary:15000}]);
+var map=function(){ emit("total", this.Salary); };
+var reduce=function(k,vals){ return Array.sum(vals); };
+db.computer.mapReduce(map, reduce, {out:{replace:"salaryTotals"}});
+db.salaryTotals.find();

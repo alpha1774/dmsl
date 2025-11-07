@@ -1,0 +1,13 @@
+14) city – MapReduce totals
+
+
+db.city.insertMany([
+ {city:"pune",type:"urban",state:"MH",population:5600000},
+ {city:"nagpur",type:"urban",state:"MH",population:2400000},
+ {city:"nashik",type:"urban",state:"MH",population:1700000}
+]);
+var reduceSum=(k,vals)=>Array.sum(vals);
+db.city.mapReduce(function(){emit(this.state,this.population);}, reduceSum, {out:"statePop"});
+db.city.mapReduce(function(){emit(this.city, this.population);}, reduceSum, {out:"cityPop"});
+db.city.mapReduce(function(){emit(this.type, this.population);}, reduceSum, {out:"typePop"});
+db.statePop.find(); db.cityPop.find(); db.typePop.find();

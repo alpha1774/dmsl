@@ -1,0 +1,18 @@
+18) Emp/works/Company/Manager (SQL updates/queries)
+
+Steps: paste each line and show result sets.
+
+
+
+UPDATE Company SET city='Pune' WHERE UPPER(cname)='ABC';
+
+UPDATE works
+SET sal=CASE WHEN sal>20000 THEN sal*1.03 ELSE sal*1.10 END
+WHERE UPPER(cname)='MBANK';
+
+SELECT DISTINCT e.ename
+FROM Emp e JOIN works w ON e.emp_id=w.emp_id
+JOIN Company c ON c.c_id=w.c_id
+WHERE UPPER(w.cname)='BOSCH' AND UPPER(c.city)='PUNE';
+
+DELETE FROM works WHERE UPPER(cname)='SBC' AND sal>50000;

@@ -1,0 +1,23 @@
+23) EMP table + sequence + index + view
+
+
+CREATE SEQUENCE seq_emp START WITH 101 INCREMENT BY 1;
+
+CREATE TABLE emp(
+  Eno NUMBER PRIMARY KEY,
+  Ename VARCHAR2(40) NOT NULL,
+  Address VARCHAR2(60) DEFAULT 'Nashik',
+  Joindate DATE,
+  Salary NUMBER(10,2)
+);
+
+ALTER TABLE emp ADD Post VARCHAR2(30);
+INSERT INTO emp(Eno,Ename,Joindate,Salary,Post) VALUES (seq_emp.NEXTVAL,'Neha',SYSDATE,25000,'Dev');
+CREATE INDEX idx_emp_ename ON emp(Ename);
+
+CREATE OR REPLACE VIEW emp_name_salary AS
+SELECT Ename, Salary FROM emp;
+
+-- Run checks
+SELECT * FROM emp;
+SELECT * FROM emp_name_salary;
