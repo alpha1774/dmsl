@@ -18,7 +18,7 @@ iv. Find all the documents produced by name “producer1” with their address##
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-use movies;
+use mov;
 db.createCollection("movies");
 
 db.movies.insertOne({name:"Movie1",type:"action",budget:1000000,producer:{name:"producer1",address:"PUNE"}});
@@ -178,3 +178,4 @@ What is $set used for?	                                          To update the v
 What does updateMany() do?	                                    Updates all documents matching the condition.
 What is projection in MongoDB?	                                  Selecting only specific fields to display in the output.
 What is the use of dot notation (producer.name)?	                      To access or query nested fields inside documents.
+
