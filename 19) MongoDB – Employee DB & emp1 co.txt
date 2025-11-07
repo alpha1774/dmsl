@@ -17,7 +17,7 @@
 16.Drop collection emp1.############################################
 
 
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
 use Employee;
 db.createCollection("emp1");
 db.emp1.insertMany([
@@ -29,10 +29,10 @@ db.emp1.find();
 db.emp1.find({sal:{$gt:5000}});
 db.emp1.find({sal:{$lt:15000}});
 db.emp1.find({sal:{$gt:10000,$lt:20000}});
-db.emp1.updateMany({},[{$set:{sal:{$round:[{$multiply:["$sal",1.10]},0]}}}]);
+db.emp1.updateMany({}, { $mul: { sal: 1.10 } })
 db.emp1.deleteMany({sal:{$lt:5000}});
 db.emp1.renameCollection("employee1");
-db.employee1.find({ename:/^n/i});
+db.employee1.find({ ename: { $regex: /^n/i } })
 db.employee1.find().sort({ename:1});
 use Employee1; db.dropDatabase();
 use Employee; db.emp1.insertOne({eno:99}); db.emp1.drop();
@@ -127,13 +127,13 @@ db.emp1.drop();
 Back to Employee DB, recreates a new emp1 with one temp doc, then drops the collection emp1.
 
 🧠 Why each concept matters (viva-ready)
-Concept / Operator		                  	What it does							                       	Example here
-$gt, $lt	   		                    	Numeric comparisons							               	Salary filters
-Range AND       	                C ombine conditions in one object								{sal:{$gt:10000,$lt:20000}}
-Pipeline update [ ... ]	     	Use aggregation operators in updates					10% hike with $multiply + $round
-updateMany vs updateOne		            All matches vs first match							Hike for all docs
-renameCollection	                    	Rename without copying									emp1 → employee1
-Regex /^n/i			                      Pattern match, case-insensitive								Names starting with ‘n’
-sort({field:1})			                      Ascending order												Sort by ename
-dropDatabase()		                     	Deletes whole DB								Demonstration on Employee1
-drop()			                         	Deletes one collection								Drops emp1
+Concept / Operator			What it does								Example here
+$gt, $lt	   			Numeric comparisons								Salary filters
+Range AND	C			ombine conditions in one object								{sal:{$gt:10000,$lt:20000}}
+Pipeline update [ ... ]		Use aggregation operators in updates					10% hike with $multiply + $round
+updateMany vs updateOne		All matches vs first match							Hike for all docs
+renameCollection		Rename without copying									emp1 → employee1
+Regex /^n/i			Pattern match, case-insensitive								Names starting with ‘n’
+sort({field:1})			Ascending order												Sort by ename
+dropDatabase()			Deletes whole DB								Demonstration on Employee1
+drop()				Deletes one collection								Drops emp1
