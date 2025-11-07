@@ -14,25 +14,33 @@ iv. Find the name of the customer whose status is either A or price is 250 or bo
 
 
 -----------------------------------------------------------------------------------------------
-use test;
-db.createCollection("orderinfo");
+use practical_db
+db.orderinfo.drop()
 db.orderinfo.insertMany([
- {cust_id:123,cust_name:"abc",status:"A",price:250},
- {cust_id:124,cust_name:"pqr",status:"B",price:400}
-]);
+  { cust_id: 123, cust_name: "abc", status: "A", price: 250 },
+  { cust_id: 124, cust_name: "xyz", status: "B", price: 300 },
+  { cust_id: 125, cust_name: "pqr", status: "A", price: 420 }
+])
 
-db.orderinfo.aggregate([{$match:{status:"A"}},{$group:{_id:"$cust_name",avgPrice:{$avg:"$price"}}}]);
-db.orderinfo.find({price:{$gte:100,$lte:1000}},{status:1,_id:0});
-db.orderinfo.find({}, {_id:0});
-db.orderinfo.createIndex({price:1}); db.orderinfo.find({price:{$gt:200}});
+// i) Name of customers with price between 250 and 450 (inclusive)
+db.orderinfo.find(
+  { price: { $gte: 250, $lte: 450 } },
+  { _id: 0, cust_name: 1 }
+)
 
+// ii) Increment price by 10 for id 123; decrement by 5 for id 124
+db.orderinfo.updateOne({ cust_id: 123 }, { $inc: { price: 10 } })
+db.orderinfo.updateOne({ cust_id: 124 }, { $inc: { price: -5 } })
 
-// assuming the docs from #10 already exist
-db.orderinfo.find({price:{$gte:250,$lte:450}},{cust_name:1,_id:0});
-db.orderinfo.updateOne({cust_id:123},{$inc:{price:10}});
-db.orderinfo.updateOne({cust_id:124},{$inc:{price:-5}});
-db.orderinfo.updateOne({cust_id:123},{$unset:{status:1}});
-db.orderinfo.find({$or:[{status:"A"},{price:250}]},{cust_name:1,_id:0});
+// iii) Remove any one field (example: remove 'status' from all docs)
+db.orderinfo.updateMany({}, { $unset: { status: "" } })
+// (to remove from only one doc: db.orderinfo.updateOne({ cust_id: 123 }, { $unset: { status: "" } }))
+
+// iv) Name of customer where status is 'A' OR price is 250 (or both)
+db.orderinfo.find(
+  { $or: [ { status: "A" }, { price: 250 } ] },
+  { _id: 0, cust_name: 1 }
+)
 
 -----------------------------------------------------------------------------------------------------------------
 
@@ -208,3 +216,4 @@ Why do we use indexes?	                                               To make qu
 What is the difference between $match and $find?                     	$match is used inside aggregation pipeline; $find is a standalone query.
 Can $unset set a field to null?                                     	No, it completely removes the field from the document.
 What does {status:1,_id:0} mean?	Show only status, hide _id from output.
+
